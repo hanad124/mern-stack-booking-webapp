@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
+import userRoutes from "../src/routes/users";
+import authRoutes from "../src/routes/auth";
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING!);
 
@@ -16,9 +18,8 @@ app.use(cors());
 
 const PORT = process.env.PORT || 5000;
 
-app.get("/api/test", async (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
