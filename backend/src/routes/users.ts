@@ -46,7 +46,9 @@ router.post(
         maxAge: 24 * 60 * 60 * 1000,
       });
 
-      return res.sendStatus(200);
+      return res.status(200).json({
+        message: "User registered successfully",
+        });
     } catch (error) {
       console.error(error);
       res.status(500).json({
