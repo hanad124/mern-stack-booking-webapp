@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
-import { Mutation, useMutation } from "react-query";
+import { useMutation } from "react-query";
 import * as apiClient from "../api-client";
-import toast from "react-hot-toast";
-import { useState } from "react";
 import { FiLoader } from "react-icons/fi";
+import { useAppContext } from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 export type registerFormData = {
   firstName: string;
@@ -14,7 +14,9 @@ export type registerFormData = {
 };
 
 const Register = () => {
-  const [loading, setLoading] = useState(false);
+  const { showToastr } = useAppContext();
+  const navigate = useNavigate();
+
   const {
     register,
     watch,
@@ -24,19 +26,17 @@ const Register = () => {
 
   const mutation = useMutation(apiClient.register, {
     onSuccess: () => {
-      toast.success("Account created successfully");
+      showToastr("Account created successfully", "SUCCESS");
+      navigate("/");
     },
     onError: (error: Error) => {
       console.error(error.message);
-      toast.error(error.message);
+      showToastr(error.message, "ERROR");
     },
   });
 
   const onSubmit = handleSubmit((data) => {
-    setLoading(true);
     mutation.mutate(data);
-
-    setLoading(false);
   });
 
   return (
@@ -148,13 +148,15 @@ const Register = () => {
       </label>
       <button
         type="submit"
-        disabled={loading}
+        disabled={mutation.isLoading}
         className={`bg-blue-500 text-white py-2 px-4 rounded ${
-          loading ? "cursor-not-allowed" : "hover:bg-blue-600"
+          mutation.isLoading ? "cursor-not-allowed" : "hover:bg-blue-600"
         }`}
       >
         <span>Register</span>
-        {loading && <FiLoader className="animate-spin inline ml-4" />}
+        {mutation.isLoading && (
+          <FiLoader className="animate-spin inline ml-4" />
+        )}
       </button>
     </form>
   );

@@ -1,8 +1,11 @@
 import React from "react";
 import toast from "react-hot-toast";
+import { useQuery } from "react-query";
+import * as apiClient from "../api-client";
 
 type AppContext = {
   showToastr: (message: string, type: "SUCCESS" | "ERROR") => void;
+  isLoggedIn: boolean;
 };
 
 const AppContext = React.createContext<AppContext | undefined>(undefined);
@@ -12,6 +15,9 @@ export const AppContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { isError } = useQuery("validateToken", apiClient.validateToken, {
+    retry: false,
+  });
   const showToastr = (message: string, type: "SUCCESS" | "ERROR") => {
     if (type === "SUCCESS") {
       toast.success(message);
@@ -21,7 +27,14 @@ export const AppContextProvider = ({
   };
 
   return (
-    <AppContext.Provider value={{ showToastr }}>{children}</AppContext.Provider>
+    <AppContext.Provider
+      value={{
+        showToastr,
+        isLoggedIn: !isError,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
   );
 };
 
