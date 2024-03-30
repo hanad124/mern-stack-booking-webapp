@@ -3,3 +3,8 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+node_modules
+.env
+.env.e2e
+dist
